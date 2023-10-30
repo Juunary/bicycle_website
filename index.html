@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Main</title>
+    <link rel="icon" href="path/to/your/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <div class="top-bar"></div> 
+    <div class="container">
+        
+        <div class="calendar">
+            <div class="title-bar">
+                <button id="prevMonth">이전 달</button>
+                <h2 id="calendarTitle"></h2>
+                <button id="nextMonth">다음 달</button>
+            </div>
+            <table>
+                <tr>
+                    <th>일</th>
+                    <th>월</th>
+                    <th>화</th>
+                    <th>수</th>
+                    <th>목</th>
+                    <th>금</th>
+                    <th>토</th>
+                </tr>
+            </table>
+        </div>
+
+        <div class="city-select">
+    <h2>도시 선택</h2>
+    <select id="cityListBox" class="list-box">
+        <option selected disabled>도시 선택</option>
+        <option>서울</option>
+        <!-- 여기에 다른 도시를 추가할 수 있습니다. -->
+    </select>
+</div>
+
+<div class="model-select">
+    <h2>모델 선택</h2>
+    <select id="modelListBox" class="list-box">
+        <option selected disabled>모델 선택</option>
+        <option>Random</option>
+        <option>시계열 모델</option>
+    </select>
+</div>
+
+    </div>
+    <button id="showResult">결과 확인</button>
+    <div id="selectedDateAlert"></div>
+
+    <script src="script.js"></script> 
+</body>
+</html>

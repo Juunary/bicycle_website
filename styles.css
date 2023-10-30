@@ -1,0 +1,102 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #FFEB91; /* 배경 색상을 변경합니다. */
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 80%; /* 너비를 변경합니다. */
+    padding: 40px 20px; /* 패딩을 변경합니다. */
+    background-color: #FFFFFF; /* 배경 색상을 변경합니다. */
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1); /* 그림자 효과를 추가합니다. */
+}
+
+.calendar, .city-select, .model-select {
+    flex: 1;
+    padding: 20px;
+    border: none; /* 테두리를 제거합니다. */
+    margin: 0 10px; /* 좌우 마진을 추가합니다. */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ECECEC; /* 테두리 색상을 변경합니다. */
+    text-align: center;
+    padding: 10px;
+}
+
+th {
+    background-color: #FFD55A; /* 배경 색상을 변경합니다. */
+    color: #FFFFFF; /* 글자 색상을 변경합니다. */
+}
+
+.title-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px; /* 아래쪽 마진을 추가합니다. */
+}
+
+.top-bar {
+    height: 1cm; /* 높이 설정 */
+    background-color: #FFEB91; /* 배경색 설정 */
+    width: 100%; /* 너비를 전체 페이지로 설정 */
+    position: fixed; /* 상단 바를 페이지 상단에 고정 */
+    top: 0; /* 상단과의 거리를 0으로 설정 */
+    z-index: 1000; /* 다른 요소들 위에 상단 바가 올라오도록 z-index 설정 */
+}
+
+/* body의 패딩을 추가하여 상단 바와 겹치지 않게 함 */
+body {
+    padding-top: 1cm; /* 상단 바의 높이만큼 패딩 추가 */
+    /* ... 기존의 스타일 ... */
+}
+
+.list-box {
+    width: 100%;
+    padding: 10px; /* 패딩을 추가합니다. */
+    border: 1px solid #ECECEC; /* 테두리 색상을 변경합니다. */
+    border-radius: 5px; /* 테두리 둥근 모양을 추가합니다. */
+}
+
+#selectedDateAlert {
+    text-align: center;
+    margin: 20px auto; /* 마진을 변경합니다. */
+    padding: 10px;
+    border: 1px solid #ECECEC; /* 테두리 색상을 변경합니다. */
+    font-weight: bold;
+    width: 80%; /* 너비를 변경합니다. */
+    background-color: #FFFFFF; /* 배경 색상을 변경합니다. */
+}
+
+/* "결과 확인" 버튼 스타일 */
+#showResult {
+    width: 220px; /* 가로 크기를 조절합니다. */
+    height: 50px; /* 세로 크기를 조절합니다. */
+    background-color: #FFA800; /* 배경 색상을 변경합니다. */
+    color: #FFFFFF; /* 글자 색상을 변경합니다. */
+    border: none; /* 테두리 제거 */
+    border-radius: 25px; /* 둥근 모양으로 설정 */
+    cursor: pointer; /* 커서를 포인터로 변경하여 버튼임을 나타냅니다. */
+    font-weight: bold; /* 글자 굵기를 설정합니다. */
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); /* 그림자 효과 추가 */
+}
+/* "결과 확인" 버튼 호버 효과 */
+#showResult:hover {
+    background-color: #FFA800; /* 호버 시 배경 색상 변경 */
+}
+/* 클릭한 날짜의 스타일 */
+.selected {
+    color: green; /* 초록색으로 변경 */
+    font-weight: bold; /* 굵게 표시 */
+}
