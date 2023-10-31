@@ -25,7 +25,7 @@ app.post('/sendData', (req, res) => {
     const pythonProcess = spawn('python', ['test.py', year, month, date, selectedCity, selectedModel]);
 
     pythonProcess.stdout.on('data', (data) => {
-        console.log(`Python 출력: ${data}`);
+        console.log(`${data}`);
     });
 
     pythonProcess.stderr.on('data', (data) => {
