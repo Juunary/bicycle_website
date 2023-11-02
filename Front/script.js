@@ -1,3 +1,5 @@
+
+
 // 클릭한 날짜를 표시하는 함수
 function showSelectedDate(cell) {
     // 모든 날짜의 클래스를 초기화
@@ -116,7 +118,8 @@ function createCalendar(year, month) {
         });
     });
 }
-
+const showResultButton = document.getElementById('showResult');
+let isRequestInProgress = false;
 
 document.getElementById('showResult').addEventListener('click', function() {
     if (selectedDateInfo) {
@@ -133,7 +136,7 @@ document.getElementById('showResult').addEventListener('click', function() {
             year: year,
             month: month,
             date: date,
-            selectedCity: selectedCity,
+            selectedCity: selectedCity,     
             selectedModel: selectedModel
         };
 
@@ -145,21 +148,32 @@ document.getElementById('showResult').addEventListener('click', function() {
             },
             body: JSON.stringify(data)
         })
-        .then(response => {
-            if (response.status === 200) {
-                alert('데이터가 성공적으로 전송되었습니다.');
-            } else {
-                alert('데이터 전송에 실패했습니다.');
+        .then(response => response.json())  // JSON 형태로 응답 변환
+        .then(data => {
+            if (data.pythonData) {
+                // 받은 데이터를 selectedDateAlert2에 표시
+                document.getElementById('selectedDateAlert2').textContent = `결과 값: ${data.pythonData}`;
             }
+            if (data.error) {
+                // 에러가 있을 경우 selectedDateAlert2에 에러 표시
+                document.getElementById('selectedDateAlert2').textContent = data.error;
+            }
+        })
+        .catch(error => {
+            console.error('에러 발생:', error);
+            alert('처리 중 오류가 발생했습니다.');
         });
     } else {
         alert('날짜를 선택해주세요.');
     }
 });
 
-function updateSelectedDateAlert(year, month, date, city, model) {
+
+
+function updateSelectedDateAlert(year, month, date, city, model, ) {
     const selectedDateAlert = document.getElementById('selectedDateAlert');
     selectedDateAlert.textContent = `${year}년 ${month}월 ${date}일 / ${city} / ${model}을 선택했습니다.`;
+    
 }
 
 document.getElementById('prevMonth').addEventListener('click', function () {

@@ -5,6 +5,8 @@ const port = 8000;
 const bodyParser = require('body-parser');
 const { spawn } = require('child_process');
 
+
+require('./Front/Get.js');
 // JSON 데이터를 파싱하기 위한 미들웨어 등록
 app.use(bodyParser.json());
 
@@ -22,25 +24,30 @@ app.post('/sendData', (req, res) => {
     // 데이터를 터미널에 출력
     console.log('Received data:', year, month, date, selectedCity, selectedModel);
 
-    const pythonProcess = spawn('python', ['scroll.py', year, month, date, selectedCity, selectedModel]);
+    const pythonProcess = spawn('python', ['Get.py', year, month, date, selectedCity, selectedModel]);
+    
+    
 
     pythonProcess.stdout.on('data', (data) => {
-        console.log(`${data}`);
+        const receivedDataFromPython = data.toString().trim();
+        console.log(`receivedDataFromPython: ${receivedDataFromPython}`);
+
+        // 성공 응답과 함께 데이터를 클라이언트로 전송
+        res.json({ pythonData: receivedDataFromPython });
     });
+
 
     pythonProcess.stderr.on('data', (data) => {
         console.error(`Python 에러: ${data}`);
+        
+        // 클라이언트로 에러 메시지 전송
+        res.status(500).json({ error: `Python 에러: ${data.toString()}` });
     });
 
-    // 에러 핸들링
-    try {
-        // 에러가 발생할 수 있는 코드 작성
-    } catch (error) {
-        console.error('에러 발생:', error);
-    }
-
-    res.sendStatus(200); // 성공 상태 코드를 클라이언트로 보냄
+    // NOTE: 여기에 res.sendStatus(200); 라인은 삭제해야 합니다.
 });
+
+
 
 app.listen(port, () => {
   console.log(`서버가 http://localhost:${port}에서 실행 중입니다.`);
