@@ -22,7 +22,7 @@ app.post('/sendData', (req, res) => {
     // 데이터를 터미널에 출력
     console.log('Received data:', year, month, date, selectedCity, selectedModel);
 
-    const pythonProcess = spawn('python', ['test.py', year, month, date, selectedCity, selectedModel]);
+    const pythonProcess = spawn('python', ['scroll.py', year, month, date, selectedCity, selectedModel]);
 
     pythonProcess.stdout.on('data', (data) => {
         console.log(`${data}`);
