@@ -152,7 +152,7 @@ document.getElementById('showResult').addEventListener('click', function() {
         .then(data => {
             if (data.pythonData) {
                 // 받은 데이터를 selectedDateAlert2에 표시
-                document.getElementById('selectedDateAlert2').textContent = `결과 값: ${data.pythonData}`;
+                document.getElementById('selectedDateAlert2').textContent = `${data.pythonData}`;
             }
             if (data.error) {
                 // 에러가 있을 경우 selectedDateAlert2에 에러 표시
@@ -172,7 +172,7 @@ document.getElementById('showResult').addEventListener('click', function() {
 
 function updateSelectedDateAlert(year, month, date, city, model, ) {
     const selectedDateAlert = document.getElementById('selectedDateAlert');
-    selectedDateAlert.textContent = `${year}년 ${month}월 ${date}일 / ${city} / ${model}을 선택했습니다.`;
+    selectedDateAlert.textContent = `${year}년 ${month}월 ${date}일 ${city}의 공유 자전거 사용량 입니다.\n 사용한 모델: ${model}`;
     
 }
 
