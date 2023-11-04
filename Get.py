@@ -25,8 +25,6 @@ elif Get_vselectedModel == 'Decision_Tree':
     Get_vselectedModel = '5'
 elif Get_vselectedModel == 'Linear_Regression':
     Get_vselectedModel = '6'
-elif Get_vselectedModel == 'MLP':
-    Get_vselectedModel = '7'
 else :
     pass
 
