@@ -1,12 +1,11 @@
 const express = require('express');
 const path = require('path');
 const app = express();
-const port = 8000;
+const port = process.env.PORT || 8000; // 환경 변수에서 포트를 가져오거나 기본값을 사용
 const bodyParser = require('body-parser');
 const { spawn } = require('child_process');
 
 
-require('./Front/Get.js');
 // JSON 데이터를 파싱하기 위한 미들웨어 등록
 app.use(bodyParser.json());
 
