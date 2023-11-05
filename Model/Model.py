@@ -1,3 +1,5 @@
+import warnings
+warnings.filterwarnings('ignore')
 import xgboost as xgb
 import pandas as pd
 from sklearn.model_selection import train_test_split, GridSearchCV
@@ -8,9 +10,7 @@ from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.linear_model import LinearRegression
 import lightgbm as lgb
-import warnings
 import sys
-warnings.filterwarnings('ignore', category=UserWarning, message='.*lightgbm.*')
 
 # 사용자 입력 데이터 처리 함수
 def process_user_data(data):
@@ -101,11 +101,11 @@ def train_and_predict_model(model, X_train, X_test, y_train, y_test, data, df, m
     result_df = process_and_encode_data(data, df)
     predicted_CNT = model.predict(result_df.values.astype(np.float32))
     predicted_CNT_rounded = round(predicted_CNT[0])
-    print(f"{model_name} predicted_cnt(rounded): {predicted_CNT_rounded}")
+    print(f"{model_name} {predicted_CNT_rounded}")
 
 # 모델별 훈련 및 예측 함수 정의
 def train_and_predict_lgbm(X_train, X_test, y_train, y_test, data, df):
-    model = lgb.LGBMRegressor(max_depth=30, random_state=42)
+    model = lgb.LGBMRegressor(max_depth=30, random_state=42, verbose=-1)
     train_and_predict_model(model, X_train, X_test, y_train, y_test, data, df, "LightGBM")
 
 def train_and_predict_xgboost(X_train, X_test, y_train, y_test, data, df):
