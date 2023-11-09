@@ -11,6 +11,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.linear_model import LinearRegression
 import lightgbm as lgb
 import sys
+import json
 
 # 사용자 입력 데이터 처리 함수
 def process_user_data(data):
@@ -36,11 +37,6 @@ def process_user_data(data):
 def process_and_encode_data(data, df):
     # 사용자 데이터 처리
     result_df = process_user_data(data)
-
-    # 연도, 월, 일 컬럼 추출
-    result_df['year'] = Get_year
-    result_df['mnth'] = Get_month
-    result_df['day'] = Get_date
 
     # 원-핫 인코딩 처리
     result_df = pd.get_dummies(result_df, columns=['day', 'year', 'mnth', 'season'])
@@ -128,10 +124,22 @@ def train_and_predict_lr(X_train, X_test, y_train, y_test, data, df):
     model = LinearRegression()
     train_and_predict_model(model, X_train, X_test, y_train, y_test, data, df, "Linear Regression")
 
-Get_year, Get_month, Get_date, Get_selectedCity, Get_vselectedModel = sys.argv[1:6]
+# Model.py의 인수 확인
+if len(sys.argv) != 2:
+    print("사용법: python3 Model.py <데이터 문자열>")
+    sys.exit(1)
 
-data = f"{Get_year}-{Get_month}-{Get_date} 서울 랜덤포레스트 서울(108) {Get_year}-{Get_month}-{Get_date} 15.7 NULL 1.9 71.1 10.07 NULL 16.5"
+data_string = sys.argv[1]
 
+data = json.loads(data_string)
+
+if len(data) >= 2:
+    Get_vselectedModel = data[1]
+    del data[1]
+else:
+    Get_vselectedModel = None
+
+print(Get_vselectedModel)
 result_df = process_user_data(data)
 
 # 데이터 로딩 및 처리
