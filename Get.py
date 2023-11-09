@@ -29,5 +29,4 @@ else :
     pass
 
 # Model\Random.py 스크립트 실행
-#subprocess.run(['python', 'Model\\Model.py', Get_year, Get_month, Get_date, Get_selectedCity, Get_vselectedModel])
-subprocess.run(['python', 'scroll.py', Get_year, Get_month, Get_date, Get_selectedCity, Get_vselectedModel])
+subprocess.run(['python', 'Model\\Model.py', Get_year, Get_month, Get_date, Get_selectedCity, Get_vselectedModel])

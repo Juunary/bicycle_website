@@ -1,23 +1,108 @@
+import sys
+import time
 import warnings
-warnings.filterwarnings('ignore')
-import xgboost as xgb
 import pandas as pd
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import numpy as np
-from sklearn.ensemble import GradientBoostingRegressor
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+import xgboost as xgb
 import lightgbm as lgb
-import sys
-import json
+
+# 경고 메시지 무시
+warnings.filterwarnings('ignore')
+
+# 웹 드라이버 설정
+options = webdriver.ChromeOptions()
+options.add_argument("--headless")  # 브라우저 창을 띄우지 않는 옵션을 추가
+driver = webdriver.Chrome(options=options)
+driver.implicitly_wait(15)  # 묵시적 대기, 활성화를 최대 15초까지 기다림
+
+# 명령줄 인자 받기
+Get_year, Get_month, Get_date, Get_selectedCity, Get_vselectedModel = sys.argv[1:6]
+
+# 받은 인자를 사용하여 날짜 형식 만들기
+formatted_date = f"{Get_year}-{Get_month.zfill(2)}-{Get_date.zfill(2)}"
+
+# '서울(108)'을 선택하려면 첫 번째 체크박스 ID를 'ztree_65_check'로 설정
+checkbox_ids = [
+    "ztree_65_check",
+    "ztree1_3_check",  # 평균기온
+    "ztree1_14_check",  # 일강수량
+    "ztree1_22_check",  # 평균 풍속
+    "ztree1_29_check",  # 평균 상대습도
+    "ztree1_43_check",  # 합계일사량
+    "ztree1_49_check",  # 3시간 신적설
+    "ztree1_54_check"   # 평균 지면온도
+]
+
+# 페이지에 접속
+driver.get('https://data.kma.go.kr/data/grnd/selectAsosRltmList.do?pgmNo=36')
+
+# "일 자료" 옵션을 선택
+Select(driver.find_element(By.ID, "dataFormCd")).select_by_value("F00501")
+
+# 날짜 입력
+date_fields = WebDriverWait(driver, 20).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "hasDatepicker")))
+for date_field in date_fields:
+    date_field.clear()
+    date_field.send_keys(formatted_date)
+
+# 잠시 대기 후 '닫기' 버튼 클릭
+time.sleep(1)
+driver.find_element(By.CLASS_NAME, "ui-datepicker-close").click()
+
+# 서울(108) 체크박스 클릭
+checkbox_id = "ztree_65_check"  # 서울(108)을 선택하는 체크박스의 ID
+try:
+    # 체크박스 요소를 찾음
+    checkbox = driver.find_element(By.ID, checkbox_id)
+    
+    # JavaScript를 이용하여 클릭 이벤트를 강제로 발생시킴
+    driver.execute_script("arguments[0].click();", checkbox)
+except Exception as e:
+    print(f"An error occurred while trying to click the checkbox with ID '{checkbox_id}': {e}")
+
+# 체크박스 클릭
+for checkbox_id in checkbox_ids:
+    try:
+        checkbox = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.ID, checkbox_id))
+        )
+        checkbox.click()  # 기다린 후 클릭
+    except Exception as e:
+        print(f"Error clicking checkbox {checkbox_id}: {e}")
+
+# '조회' 버튼 클릭 대신 goSearch() 함수 직접 호출
+driver.execute_script("goSearch();")
+time.sleep(5) 
+
+# 선택된 도시에 대한 데이터를 포함하는 행을 찾습니다.
+city_name = '서울' if Get_selectedCity == '0' else '다른 도시 이름'  # 실제 도시 이름으로 대체 필요
+city_xpath = f"//tr[td[contains(text(),'{city_name}')]]"
+row_data = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, city_xpath)))
+data_items = row_data.find_elements(By.TAG_NAME, "td")
+
+# 크롤링한 데이터를 리스트에 저장합니다.
+crawled_data = [item.text for item in data_items]
+
+#리스트 0번째 도시이름 변경하기
+crawled_data[0]=0
+
+# 종료 전 대기
+driver.quit()
 
 # 사용자 입력 데이터 처리 함수
 def process_user_data(data):
-    data_parts = data.split()
-    year, mnth, day = map(int, data_parts[0].split('-'))
-    values = [float(val) if val != "NULL" else np.nan for val in data_parts[5:12]]
+    year, mnth, day = map(int, data[1].split('-'))
+    values = [float(val) if val != "" else np.nan for val in data[2:]]
     avg_tmp, day_p, avg_wind, avg_rhum, t_sd, snow, avg_gtmp = values
 
     if mnth in [12, 1, 2]:
@@ -124,22 +209,7 @@ def train_and_predict_lr(X_train, X_test, y_train, y_test, data, df):
     model = LinearRegression()
     train_and_predict_model(model, X_train, X_test, y_train, y_test, data, df, "Linear Regression")
 
-# Model.py의 인수 확인
-if len(sys.argv) != 2:
-    print("사용법: python3 Model.py <데이터 문자열>")
-    sys.exit(1)
-
-data_string = sys.argv[1]
-
-data = json.loads(data_string)
-
-if len(data) >= 2:
-    Get_vselectedModel = data[1]
-    del data[1]
-else:
-    Get_vselectedModel = None
-
-print(Get_vselectedModel)
+data = crawled_data
 result_df = process_user_data(data)
 
 # 데이터 로딩 및 처리
