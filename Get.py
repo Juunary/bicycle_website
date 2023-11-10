@@ -1,13 +1,31 @@
 # Get.py
 import sys
 import subprocess
+from datetime import datetime, timedelta
 
 if len(sys.argv) < 6:
-    print("인수 부족")
+    print("You must select the date, city, and model.")
     sys.exit(1)
 
 # 인자로 받은 값들을 변수에 저장
 Get_year, Get_month, Get_date, Get_selectedCity, Get_vselectedModel = sys.argv[1:6]
+
+# 입력받은 날짜를 datetime 객체로 변환
+input_date = datetime(int(Get_year), int(Get_month), int(Get_date))
+
+# 현재 날짜를 구하고 하루를 뺀 날짜를 계산
+yesterday = datetime.now() - timedelta(days=1)
+
+# 입력받은 날짜가 어제보다 이후인지 확인
+if input_date > yesterday:
+    current_date = datetime.now().strftime('%Y-%m-%d')  # Format the current date as a string
+    print(f"We only provide data for dates in the past, not beyond yesterday. Today's date is {current_date}.")
+    sys.exit(1)
+
+# "도시 선택" 또는 "모델 선택"인 경우 안내 메시지 출력
+if Get_selectedCity == "도시 선택" or Get_vselectedModel == "모델 선택":
+    print("You must select the date, city, and model.")
+    sys.exit(1)
 
 # 서울 여부를 숫자로 변환
 Get_selectedCity = '0' if Get_selectedCity == 'Seoul' else '1'

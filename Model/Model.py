@@ -68,8 +68,8 @@ try:
     # JavaScript를 이용하여 클릭 이벤트를 강제로 발생시킴
     driver.execute_script("arguments[0].click();", checkbox)
 except Exception as e:
-    print(f"An error occurred while trying to click the checkbox with ID '{checkbox_id}': {e}")
-
+    #print(f"An error occurred while trying to click the checkbox with ID '{checkbox_id}': {e}")
+    pass
 # 체크박스 클릭
 for checkbox_id in checkbox_ids:
     try:
@@ -78,7 +78,8 @@ for checkbox_id in checkbox_ids:
         )
         checkbox.click()  # 기다린 후 클릭
     except Exception as e:
-        print(f"Error clicking checkbox {checkbox_id}: {e}")
+        #print(f"Error clicking checkbox {checkbox_id}: {e}")
+        pass
 
 # '조회' 버튼 클릭 대신 goSearch() 함수 직접 호출
 driver.execute_script("goSearch();")
