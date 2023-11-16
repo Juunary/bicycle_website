@@ -48,7 +48,7 @@ driver.get('https://data.kma.go.kr/data/grnd/selectAsosRltmList.do?pgmNo=36')
 Select(driver.find_element(By.ID, "dataFormCd")).select_by_value("F00501")
 
 # 날짜 입력
-date_fields = WebDriverWait(driver, 0).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "hasDatepicker")))
+date_fields = WebDriverWait(driver, 3).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "hasDatepicker")))
 for date_field in date_fields:
     date_field.clear()
     date_field.send_keys(formatted_date)
@@ -70,7 +70,7 @@ except Exception as e:
 # 체크박스 클릭
 for checkbox_id in checkbox_ids:
     try:
-        checkbox = WebDriverWait(driver, 0).until(
+        checkbox = WebDriverWait(driver, 3).until(
             EC.element_to_be_clickable((By.ID, checkbox_id))
         )
         checkbox.click()  # 기다린 후 클릭
@@ -81,7 +81,7 @@ for checkbox_id in checkbox_ids:
 driver.execute_script("goSearch();")
 
 # 데이터가 로딩될 때까지 대기 
-WebDriverWait(driver, 0).until(
+WebDriverWait(driver, 5).until(
     EC.presence_of_element_located((By.XPATH, "//tr[td[contains(text(),'서울')]]"))
 )
 
@@ -98,33 +98,27 @@ driver.quit()
 
 # 사용자 입력 데이터 처리 함수
 def process_user_data(data):
-    if len(data) >= 8:  # 데이터 길이가 충분한지 확인
-        year, mnth, day = map(int, data[1].split('-'))
-        values = [float(val) if val != "" else np.nan for val in data[2:]]
-        avg_tmp, day_p, avg_wind, avg_rhum, t_sd, snow, avg_gtmp = values
+    year, mnth, day = map(int, data[1].split('-'))
+    values = [float(val) if val != "" else np.nan for val in data[2:]]
+    avg_tmp, day_p, avg_wind, avg_rhum, t_sd, snow, avg_gtmp = values
 
-        if mnth in [12, 1, 2]:
-            season = 3
-        elif mnth in [3, 4, 5]:
-            season = 0
-        elif mnth in [6, 7, 8]:
-            season = 1
-        elif mnth in [9, 10, 11]:
-            season = 2
-        result = pd.DataFrame([{'year': year, 'mnth': mnth, 'day': day, 'avg_tmp': avg_tmp, 'day_p': day_p,
-                              'avg_wind': avg_wind, 'avg_rhum': avg_rhum, 't_sd': t_sd, 'snow': snow,
-                              'avg_gtmp': avg_gtmp, 'season': season}])
-        result = result.fillna(result.mean())
-        return result
-    else:
-        return None
+    if mnth in [12, 1, 2]:
+        season = 3
+    elif mnth in [3, 4, 5]:
+        season = 0
+    elif mnth in [6, 7, 8]:
+        season = 1
+    elif mnth in [9, 10, 11]:
+        season = 2
+    result = pd.DataFrame([{'year': year, 'mnth': mnth, 'day': day, 'avg_tmp': avg_tmp, 'day_p': day_p,
+                          'avg_wind': avg_wind, 'avg_rhum': avg_rhum, 't_sd': t_sd, 'snow': snow,
+                          'avg_gtmp': avg_gtmp, 'season': season}])
+    result = result.fillna(result.mean())
+    return result
 
 def process_and_encode_data(data, df):
     # 사용자 데이터 처리
     result_df = process_user_data(data)
-
-    if result_df is None:  # 데이터 처리 오류
-        return None
 
     # 원-핫 인코딩 처리
     result_df = pd.get_dummies(result_df, columns=['day', 'year', 'mnth', 'season'])
@@ -183,11 +177,6 @@ def train_and_predict_model(model, X_train, X_test, y_train, y_test, data, df, m
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)    
     result_df = process_and_encode_data(data, df)
-
-    if result_df is None:  # 데이터 처리 오류
-        print(f"Error: Data processing failed for {model_name}")
-        return
-
     predicted_CNT = model.predict(result_df.values.astype(np.float32))
     predicted_CNT_rounded = round(predicted_CNT[0])
     print(f"{model_name} {predicted_CNT_rounded}")
