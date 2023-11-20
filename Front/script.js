@@ -168,6 +168,25 @@ document.getElementById('showResult').addEventListener('click', function() {
     }
 });
 
+document.getElementById('submitFeedback').addEventListener('click', function() {
+    const feedback = document.getElementById('feedbackText').value;
+
+    // Fetch API를 사용하여 서버에 POST 요청
+    fetch('/submitFeedback', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ feedback: feedback }) // 피드백 내용을 JSON 형태로 변환
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log(data); // 서버로부터의 응답 출력
+        document.getElementById('feedbackText').value = ''; // 텍스트 필드 비우기
+        document.getElementById('feedbackText').placeholder = '의견 감사합니다!'; // placeholder 변경
+    })
+    .catch(error => console.error('에러:', error));
+});
 
 
 function updateSelectedDateAlert(year, month, date, city, model, ) {
