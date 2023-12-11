@@ -16,35 +16,32 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'Front', 'index.html'));
 });
 
-app.post('/sendData', (req, res) => {
-    // 클라이언트에서 보낸 데이터는 req.body에서 사용 가능
-    const { year, month, date, selectedCity, selectedModel } = req.body;
-    
-    // 데이터를 터미널에 출력
-    console.log('Received data:', year, month, date, selectedCity, selectedModel);
+app.post('/sendData', async (req, res) => {
+  const { year, month, date, selectedCity, selectedModel } = req.body;
+  console.log('Received data:', year, month, date, selectedCity, selectedModel);
 
-    const pythonProcess = spawn('python', ['Get.py', year, month, date, selectedCity, selectedModel]);
-    
-    
-
-    pythonProcess.stdout.on('data', (data) => {
-        const receivedDataFromPython = data.toString().trim();
-        console.log(`receivedDataFromPython: ${receivedDataFromPython}`);
-
-        // 성공 응답과 함께 데이터를 클라이언트로 전송
-        res.json({ pythonData: receivedDataFromPython });
-    });
-
-
-    pythonProcess.stderr.on('data', (data) => {
-        console.error(`Python 에러: ${data}`);
-        
-        // 클라이언트로 에러 메시지 전송
-        res.status(500).json({ error: `Python 에러: ${data.toString()}` });
-    });
-
-    // NOTE: 여기에 res.sendStatus(200); 라인은 삭제해야 합니다.
+  try {
+      const data = await runPythonScript(year, month, date, selectedCity, selectedModel);
+      res.json({ pythonData: data });
+  } catch (error) {
+      console.error('Python 에러:', error);
+      res.status(500).json({ error: `Python 에러: ${error.message}` });
+  }
 });
+
+function runPythonScript(year, month, date, selectedCity, selectedModel) {
+  return new Promise((resolve, reject) => {
+    const pythonProcess = spawn('python', ['Get.py', year, month, date, selectedCity, selectedModel]);
+
+      pythonProcess.stdout.on('data', (data) => {
+          resolve(data.toString().trim());
+      });
+
+      pythonProcess.stderr.on('data', (data) => {
+          reject(new Error(data.toString()));
+      });
+  });
+}
 
 // 피드백을 받아서 파일에 저장하는 라우트
 app.post('/submitFeedback', (req, res) => {

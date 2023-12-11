@@ -62,20 +62,20 @@ document.getElementById('nextMonth').addEventListener('click', function () {
 const currentDate = new Date();
 createCalendar(currentDate.getFullYear(), currentDate.getMonth());
 
-function bindCellClickEvent() {
-    const cells = document.querySelectorAll('.calendar table td');
-    cells.forEach((cell) => {
-        cell.addEventListener('click', function () {
-            cells.forEach((c) => c.classList.remove('selected'));
-            cell.classList.add('selected');
-            selectedDateInfo = {
-                year: year,
-                month: month + 1,
-                date: cell.textContent
-            };
-        });
-    });
-}
+// function bindCellClickEvent() {
+//     const cells = document.querySelectorAll('.calendar table td');
+//     cells.forEach((cell) => {
+//         cell.addEventListener('click', function () {
+//             cells.forEach((c) => c.classList.remove('selected'));
+//             cell.classList.add('selected');
+//             selectedDateInfo = {
+//                 year: year,
+//                 month: month + 1,
+//                 date: cell.textContent
+//             };
+//         });
+//     });
+// }
 
 let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth();
