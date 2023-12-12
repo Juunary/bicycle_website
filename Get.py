@@ -1,15 +1,16 @@
+# -*- coding: utf-8 -*-
 # Get.py
 import sys
 import subprocess
 from datetime import datetime, timedelta
 
-if len(sys.argv) < 6:
-    print("You must select the date, city, and model.")
-    sys.exit(1)
-
-# 인자로 받은 값들을 변수에 저장
-Get_year, Get_month, Get_date, Get_selectedCity, Get_vselectedModel = sys.argv[1:6]
-
+# 커맨드 라인 인수의 개수 확인
+if len(sys.argv) == 6:
+    # 인수 부족할 경우 기본 값 할당
+    Get_year, Get_month, Get_date, Get_selectedCity, Get_vselectedModel = sys.argv[1:6]
+else:
+    # 커맨드 라인 인수 사용
+    Get_year, Get_month, Get_date, Get_selectedCity, Get_vselectedModel = '2023', '10', '11', 'Seoul', 'Random_Forest'
 # 입력받은 날짜를 datetime 객체로 변환
 input_date = datetime(int(Get_year), int(Get_month), int(Get_date))
 
