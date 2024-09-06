@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*- 이게 없애도 되려나
 # Get.py
 import sys
 import subprocess
@@ -18,12 +18,14 @@ input_date = datetime(int(Get_year), int(Get_month), int(Get_date))
 yesterday = datetime.now() - timedelta(days=1)
 
 # 입력받은 날짜가 어제보다 이후인지 확인
+
 if input_date > yesterday:
     current_date = datetime.now().strftime('%Y-%m-%d')  # Format the current date as a string
     print(f"We only provide data for dates in the past, not beyond yesterday. Today's date is {current_date}.")
     sys.exit(1)
 
 # "도시 선택" 또는 "모델 선택"인 경우 안내 메시지 출력
+# 이부분 catch 에러로 바꿀 수 있을듯
 if Get_selectedCity == "도시 선택" or Get_vselectedModel == "모델 선택":
     print("You must select the date, city, and model.")
     sys.exit(1)

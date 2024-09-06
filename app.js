@@ -4,12 +4,12 @@ const app = express();
 const port = process.env.PORT || 8000; // 환경 변수에서 포트를 가져오거나 기본값을 사용
 const bodyParser = require('body-parser');
 const { spawn } = require('child_process');
-const fs = require('fs'); // 파일 시스템 모듈을 추가합니다.
+const fs = require('fs'); // 파일 시스템 모듈을 추가
 
 // JSON 데이터를 파싱하기 위한 미들웨어 등록
 app.use(bodyParser.json());
 
-// "Front" 디렉토리를 정적 파일로 서빙하기 위한 미들웨어를 등록합니다.
+// "Front" 디렉토리를 정적 파일로 서빙하기 위한 미들웨어를 등록
 app.use(express.static(path.join(__dirname, 'Front')));
 
 app.get('/', (req, res) => {
